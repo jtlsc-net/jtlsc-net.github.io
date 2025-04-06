@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自己紹介</title>
+    <title>C++の問題解説</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -54,25 +54,46 @@
 </head>
 <body>
 
-    <header>
-        <h1>Intro</h1>
-        <nav>
-            <a href="#intro">自己紹介</a>
-            <a href="en_cpp_problem.html">C++ things I want to remember</a> 
-            <a href="en_index.html">English</a>
-        </nav>
-    </header>
+<header>
+    <h1>C++の覚えたいこと</h1>
+    <nav>
+        <a href="index.html">自己紹介</a>
+        <a href="#problems">C++の覚えたいこと</a>
+        <a href="en_cpp_problem.html">English</a>
+    </nav>
+</header>
 
-<section id="intro">
-    <h2>自己紹介</h2>
-    <p>こんにちは！私はjtlsc-netです。C++をいつも勉強しているエンジニアです。</p>
-    <p>プログラミングに興味を持ち、C++やpythonを使って問題を解決しています。</p>
-    <p>このウエブサイトでは、私がC++の覚えたいことをアップします。</p>
-    <p>＊chatgptを使ってこのウエブサイトを組み立てました。＊ </p>
+<section id="problems">
+    <h2>問題: フィボナッチ数列の計算</h2>
+    <p>フィボナッチ数列のn番目の数字を計算するプログラムを作成します。</p>
+
+    <h3>解法:</h3>
+    <p>次のC++コードは、再帰的にフィボナッチ数を計算します。</p>
+
+    <code>
+#include <iostream>
+using namespace std;
+
+int fibonacci(int n) {
+    if (n <= 1) {
+        return n;
+    }
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+int main() {
+    int n;
+    cout << "n番目のフィボナッチ数を計算します: ";
+    cin >> n;
+    cout << "フィボナッチ数列の " << n << " 番目の数: " << fibonacci(n) << endl;
+    return 0;
+}
+    </code>
+    <p>このプログラムは再帰を使用してフィボナッチ数を計算します。効率を改善するためには、動的計画法を使用することをお勧めします。</p>
 </section>
 
 <footer>
-    <p>&copy; 2025 jtlsc-net. All Rights Reserved.</p>
+    <p>&copy; 2025 [あなたの名前]. All Rights Reserved.</p>
 </footer>
 
 </body>

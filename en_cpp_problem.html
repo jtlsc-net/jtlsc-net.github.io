@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自己紹介</title>
+    <title>C++ things I want to remember</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -54,25 +54,49 @@
 </head>
 <body>
 
-    <header>
-        <h1>Intro</h1>
-        <nav>
-            <a href="#intro">自己紹介</a>
-            <a href="en_cpp_problem.html">C++ things I want to remember</a> 
-            <a href="en_index.html">English</a>
-        </nav>
-    </header>
+<header>
+    <h1>C++ things I want to remember</h1>
+    <nav>
+        <a href="en_index.html">Intro</a>
+        <a href="#problem0">C++ things I want to remember</a>  <!-- 新しいページへのリンク -->
+        <a href="index.html">日本語</a>
+    </nav>
+</header>
 
-<section id="intro">
-    <h2>自己紹介</h2>
-    <p>こんにちは！私はjtlsc-netです。C++をいつも勉強しているエンジニアです。</p>
-    <p>プログラミングに興味を持ち、C++やpythonを使って問題を解決しています。</p>
-    <p>このウエブサイトでは、私がC++の覚えたいことをアップします。</p>
-    <p>＊chatgptを使ってこのウエブサイトを組み立てました。＊ </p>
+<section id="problem0">
+    <h2>Error: std::construct_at: no matching overloaded function</h2>
+    <p>Discovered while using emplace_back</p>
+
+    <h3>Solution:</h3>
+    <p>As in the following C++ code, you need a move constructor defined to use emplace_back.  push_back simply copies, so when constructing elements and placing them in the vector, this saves time.</p>
+
+    <code>
+#include &lt;vector&gt;
+#include &lt;iostream&gt;
+using namespace std;
+
+struct Node {
+    int value;
+    vector&lt;Node*&gt; children{};
+    Node(int in) : value{ in } {};
+    // Without the below move constructor we get an error.
+    Node(Node&& new_node) : value{ move(new_node.value) }, children{ move(new_node.children) } {};
+};
+
+int main() {
+    Node head(21);
+
+    head.children.emplace_back(new Node(24));
+    
+    std::cout &lt;&lt; head.children.at(0)-&gt;value &lt;&lt; std::endl;
+    
+    delete head.children.at(0);
+}
+    </code>
 </section>
 
 <footer>
-    <p>&copy; 2025 jtlsc-net. All Rights Reserved.</p>
+    <p>&copy; 2025 jtlc-net All Rights Reserved.</p>
 </footer>
 
 </body>
