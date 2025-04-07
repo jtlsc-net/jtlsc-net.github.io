@@ -80,7 +80,7 @@ struct Node {
     vector&lt;Node*&gt; children{};
     Node(int in) : value{ in } {};
     // Without the below move constructor we get an error.
-    Node(Node&& new_node) : value{ move(new_node.value) }, children{ move(new_node.children) } {};
+    Node(Node&& new_node) : value{ new_node.value }, children{ move(new_node.children) } {};
 };
 
 int main() {
