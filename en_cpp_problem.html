@@ -95,6 +95,56 @@ int main() {
     </code>
 </section>
 
+<section id="problem1">
+    <h2>Move constructor for raw pointers</h2>
+    <p>Ref: https://stackoverflow.com/a/37443572</p>
+
+    <h3>Solution:</h3>
+    <p>There are 3 cases that I know of for move constructors: trivially copyable (types like int, moving gives no benefit), moveable (types like vector, properly handle std::move()),
+        and raw pointers, which must be manually reassigned and then nulled in the source object.</p>
+
+    <code>
+#include &lt;iostream&gt;
+
+using namespace std;
+
+struct Node {
+  int val;
+  Node * next;
+  Node() {};
+  Node(Node* in) {
+      next = in;
+  };
+  Node(Node&& new_node) {
+      next = new_node.next;
+      new_node.next = nullptr;
+      val = new_node.val;
+  }
+};
+
+int main()
+{
+    Node first;
+    first.val = 21;
+    first.next = new Node();
+    first.next-&gt;val = 24;
+    
+    Node last = move(first);
+    
+    cout &lt;&lt; first.val &lt;&lt; ",";
+    if (first.next == nullptr) cout &lt;&lt; "null" &lt;&lt; endl;
+    else cout &lt;&lt; first.next-&gt;val &lt;&lt; endl;
+    
+    cout &lt;&lt; last.val &lt;&lt; "," &lt;&lt; last.next-&gt;val &lt;&lt; endl;
+    
+    delete last.next;
+
+    return 0;
+}
+    </code>
+</section>
+    
+
 <footer>
     <p>&copy; 2025 jtlc-net All Rights Reserved.</p>
 </footer>
