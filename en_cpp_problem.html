@@ -32,6 +32,9 @@
             background-color: white;
             border-radius: 8px;
         }
+        .content{
+            padding-bottom: 60px;
+        }
         footer {
             text-align: center;
             padding: 10px;
@@ -53,172 +56,175 @@
     </style>
 </head>
 <body>
+    <div class="content">
 
-<header>
-    <h1>C++ things I want to remember</h1>
-    <nav>
-        <a href="en_index.html">Intro</a>
-        <a href="#problem0">C++ things I want to remember</a>
-    </nav>
-</header>
-
-<section id="problem0">
-    <h2>Error: std::construct_at: no matching overloaded function</h2>
-    <p>Discovered while using emplace_back</p>
-    <p>Ref: https://stackoverflow.com/questions/74133326/error-c2672-stdconstruct-at-no-matching-overloaded-function-found-error</p>
-
-    <h3>Solution:</h3>
-    <p>As in the following C++ code, you need a move constructor defined to use emplace_back.  push_back simply copies, so when constructing elements and placing them in the vector, this saves time.</p>
-
-    <code>
-#include &lt;vector&gt;
-#include &lt;iostream&gt;
-using namespace std;
-
-struct Node {
-    int value;
-    vector&lt;Node*&gt; children{};
-    Node(int in) : value{ in } {};
-    // Without the below move constructor we get an error.
-    Node(Node&& new_node) : value{ new_node.value }, children{ move(new_node.children) } {};
-};
-
-int main() {
-    Node head(21);
-
-    head.children.emplace_back(new Node(24));
-    
-    std::cout &lt;&lt; head.children.at(0)-&gt;value &lt;&lt; std::endl;
-    
-    delete head.children.at(0);
-}
-    </code>
-</section>
-
-<section id="problem1">
-    <h2>Move constructor for raw pointers</h2>
-    <p>Ref: https://stackoverflow.com/a/37443572</p>
-
-    <h3>Solution:</h3>
-    <p>There are 3 cases that I know of for move constructors: trivially copyable (types like int, moving gives no benefit), moveable (types like vector, properly handle std::move()),
-        and raw pointers, which must be manually reassigned and then nulled in the source object.</p>
-
-    <code>
-#include &lt;iostream&gt;
-
-using namespace std;
-
-struct Node {
-  int val;
-  Node * next;
-  Node() {};
-  Node(Node* in) {
-      next = in;
-  };
-  Node(Node&& new_node) {
-      next = new_node.next;
-      new_node.next = nullptr;
-      val = new_node.val;
-  }
-};
-
-int main()
-{
-    Node first;
-    first.val = 21;
-    first.next = new Node();
-    first.next-&gt;val = 24;
-    
-    Node last = move(first);
-    
-    cout &lt;&lt; first.val &lt;&lt; ",";
-    if (first.next == nullptr) cout &lt;&lt; "null" &lt;&lt; endl;
-    else cout &lt;&lt; first.next-&gt;val &lt;&lt; endl;
-    
-    cout &lt;&lt; last.val &lt;&lt; "," &lt;&lt; last.next-&gt;val &lt;&lt; endl;
-    
-    delete last.next;
-
-    return 0;
-}
-    </code>
-</section>
-
-<section id="problem1">
-    <h2>Comparison between list iterators</h2>
-
-    <h3>Solution:</h3>
-    <p>If you are using two iterators to iterate over a list in a two-pointers manner (for example, one goes begin -&gt; end and one goes end -&gt; begin), you cannot compare the two 
-        iterators with &lt; or &gt;.  Instead, you either must change your problem to re-check every step, which makes two-pointers solutions inelegant, or switch to a vector.
-    </p>
-    <p>
-        The underlying mechanic is that vector uses a random access iterator, which defines &lt; and &gt;, while list only has bidirectional iterators, which don't define &lt; and &gt;.
-    </p>
-
-    <code>
+        <header>
+            <h1>C++ things I want to remember</h1>
+            <nav>
+                <a href="en_index.html">Intro</a>
+                <a href="#problem0">C++ things I want to remember</a>
+            </nav>
+        </header>
+        
+        <section id="problem0">
+            <h2>Error: std::construct_at: no matching overloaded function</h2>
+            <p>Discovered while using emplace_back</p>
+            <p>Ref: https://stackoverflow.com/questions/74133326/error-c2672-stdconstruct-at-no-matching-overloaded-function-found-error</p>
+        
+            <h3>Solution:</h3>
+            <p>As in the following C++ code, you need a move constructor defined to use emplace_back.  push_back simply copies, so when constructing elements and placing them in the vector, this saves time.</p>
+        
+            <code>
+        #include &lt;vector&gt;
         #include &lt;iostream&gt;
-            #include &lt;list&gt;
-            #include &lt;vector&gt;
+        using namespace std;
+        
+        struct Node {
+            int value;
+            vector&lt;Node*&gt; children{};
+            Node(int in) : value{ in } {};
+            // Without the below move constructor we get an error.
+            Node(Node&& new_node) : value{ new_node.value }, children{ move(new_node.children) } {};
+        };
+        
+        int main() {
+            Node head(21);
+        
+            head.children.emplace_back(new Node(24));
             
-            using namespace std;
+            std::cout &lt;&lt; head.children.at(0)-&gt;value &lt;&lt; std::endl;
             
-            // Doesn't compile.
-            // void two_pointers_list() {
-                // list&lt;int&gt; n { 1, 0, 0, 2, 0, 0, 3, 4, 5};
-                // auto l = n.begin();
-                // auto r = n.end();
-                // --r;
-                // auto advance = [&l, &r, &n]() {
-                //     while (*l == 0) {
-                //         ++l;
-                //     }
-                //     while (*r != 0) {
-                //         --r;
-                //     }
-                // };
-                // advance();
-                // while( l &lt; r) {
-                //     iter_swap(l, r);
-                //     advance();
-                // }
-            // }
+            delete head.children.at(0);
+        }
+            </code>
+        </section>
+        
+        <section id="problem1">
+            <h2>Move constructor for raw pointers</h2>
+            <p>Ref: https://stackoverflow.com/a/37443572</p>
+        
+            <h3>Solution:</h3>
+            <p>There are 3 cases that I know of for move constructors: trivially copyable (types like int, moving gives no benefit), moveable (types like vector, properly handle std::move()),
+                and raw pointers, which must be manually reassigned and then nulled in the source object.</p>
+        
+            <code>
+        #include &lt;iostream&gt;
+        
+        using namespace std;
+        
+        struct Node {
+          int val;
+          Node * next;
+          Node() {};
+          Node(Node* in) {
+              next = in;
+          };
+          Node(Node&& new_node) {
+              next = new_node.next;
+              new_node.next = nullptr;
+              val = new_node.val;
+          }
+        };
+        
+        int main()
+        {
+            Node first;
+            first.val = 21;
+            first.next = new Node();
+            first.next-&gt;val = 24;
             
-            // This works
-            void two_pointers_vector() {
-                vector&lt;int&gt; n { 1, 0, 0, 2, 0, 0, 3, 4, 5};
-                auto l = n.begin();
-                auto r = n.end();
-                --r;
-                auto advance = [&l, &r, &n]() {
-                    while (*l == 0) {
-                        ++l;
-                    }
-                    while (*r != 0) {
+            Node last = move(first);
+            
+            cout &lt;&lt; first.val &lt;&lt; ",";
+            if (first.next == nullptr) cout &lt;&lt; "null" &lt;&lt; endl;
+            else cout &lt;&lt; first.next-&gt;val &lt;&lt; endl;
+            
+            cout &lt;&lt; last.val &lt;&lt; "," &lt;&lt; last.next-&gt;val &lt;&lt; endl;
+            
+            delete last.next;
+        
+            return 0;
+        }
+            </code>
+        </section>
+        
+        <section id="problem2">
+            <h2>Comparison between list iterators</h2>
+        
+            <h3>Solution:</h3>
+            <p>If you are using two iterators to iterate over a list in a two-pointers manner (for example, one goes begin -&gt; end and one goes end -&gt; begin), you cannot compare the two 
+                iterators with &lt; or &gt;.  Instead, you either must change your problem to re-check every step, which makes two-pointers solutions inelegant, or switch to a vector.
+            </p>
+            <p>
+                The underlying mechanic is that vector uses a random access iterator, which defines &lt; and &gt;, while list only has bidirectional iterators, which don't define &lt; and &gt;.
+            </p>
+        
+            <code>
+                #include &lt;iostream&gt;
+                    #include &lt;list&gt;
+                    #include &lt;vector&gt;
+                    
+                    using namespace std;
+                    
+                    // Doesn't compile.
+                    // void two_pointers_list() {
+                        // list&lt;int&gt; n { 1, 0, 0, 2, 0, 0, 3, 4, 5};
+                        // auto l = n.begin();
+                        // auto r = n.end();
+                        // --r;
+                        // auto advance = [&l, &r, &n]() {
+                        //     while (*l == 0) {
+                        //         ++l;
+                        //     }
+                        //     while (*r != 0) {
+                        //         --r;
+                        //     }
+                        // };
+                        // advance();
+                        // while( l &lt; r) {
+                        //     iter_swap(l, r);
+                        //     advance();
+                        // }
+                    // }
+                    
+                    // This works
+                    void two_pointers_vector() {
+                        vector&lt;int&gt; n { 1, 0, 0, 2, 0, 0, 3, 4, 5};
+                        auto l = n.begin();
+                        auto r = n.end();
                         --r;
+                        auto advance = [&l, &r, &n]() {
+                            while (*l == 0) {
+                                ++l;
+                            }
+                            while (*r != 0) {
+                                --r;
+                            }
+                        };
+                        advance();
+                        while( l &lt; r) {
+                            iter_swap(l, r);
+                            advance();
+                        }
+                        
+                        // 0,0,0,0,2,1,3,4,5
+                        for (const auto& elem : n) {
+                            std::cout &lt;&lt; elem &lt;&lt; ",";
+                        }
+                        std::cout &lt;&lt; std::endl;
                     }
-                };
-                advance();
-                while( l &lt; r) {
-                    iter_swap(l, r);
-                    advance();
-                }
-                
-                // 0,0,0,0,2,1,3,4,5
-                for (const auto& elem : n) {
-                    std::cout &lt;&lt; elem &lt;&lt; ",";
-                }
-                std::cout &lt;&lt; std::endl;
-            }
-            
-            int main()
-            {
-                //two_pointers_list();
-                two_pointers_vector();
-            
-                return 0;
-            }
-    </code>
-</section>
+                    
+                    int main()
+                    {
+                        //two_pointers_list();
+                        two_pointers_vector();
+                    
+                        return 0;
+                    }
+            </code>
+        </section>
+    </div>
+
     
 
 <footer>
