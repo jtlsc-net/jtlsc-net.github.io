@@ -143,6 +143,82 @@ int main()
 }
     </code>
 </section>
+
+<section id="problem1">
+    <h2>Comparison between list iterators</h2>
+
+    <h3>Solution:</h3>
+    <p>If you are using two iterators to iterate over a list in a two-pointers manner (for example, one goes begin -&gt; end and one goes end -&gt; begin), you cannot compare the two 
+        iterators with &lt; or &gt;.  Instead, you either must change your problem to re-check every step, which makes two-pointers solutions inelegant, or switch to a vector.
+    </p>
+    <p>
+        The underlying mechanic is that vector uses a random access iterator, which defines &lt; and &gt;, while list only has bidirectional iterators, which don't define &lt; and &gt;.
+    </p>
+
+    <code>
+        #include &lt;iostream&gt;
+            #include &lt;list&gt;
+            #include &lt;vector&gt;
+            
+            using namespace std;
+            
+            // Doesn't compile.
+            // void two_pointers_list() {
+                // list&lt;int&gt; n { 1, 0, 0, 2, 0, 0, 3, 4, 5};
+                // auto l = n.begin();
+                // auto r = n.end();
+                // --r;
+                // auto advance = [&l, &r, &n]() {
+                //     while (*l == 0) {
+                //         ++l;
+                //     }
+                //     while (*r != 0) {
+                //         --r;
+                //     }
+                // };
+                // advance();
+                // while( l &lt; r) {
+                //     iter_swap(l, r);
+                //     advance();
+                // }
+            // }
+            
+            // This works
+            void two_pointers_vector() {
+                vector&lt;int&gt; n { 1, 0, 0, 2, 0, 0, 3, 4, 5};
+                auto l = n.begin();
+                auto r = n.end();
+                --r;
+                auto advance = [&l, &r, &n]() {
+                    while (*l == 0) {
+                        ++l;
+                    }
+                    while (*r != 0) {
+                        --r;
+                    }
+                };
+                advance();
+                while( l &lt; r) {
+                    iter_swap(l, r);
+                    advance();
+                }
+                
+                // 0,0,0,0,2,1,3,4,5
+                for (const auto& elem : n) {
+                    std::cout &lt;&lt; elem &lt;&lt; ",";
+                }
+                std::cout &lt;&lt; std::endl;
+            }
+            
+            int main()
+            {
+                //two_pointers_list();
+                two_pointers_vector();
+            
+                return 0;
+            }
+    </code>
+</section>
     
 
 <footer>
